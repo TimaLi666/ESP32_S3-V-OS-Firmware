@@ -88,8 +88,8 @@ const char* attackMenu[] = { "BEACON SPAM", "RICK ROLL", "APPLE POPUP", "DEAUTH 
 int attackCount = 10;
 
 // Меню настроек
-const char* settingsMenu[] = { "BRIGHTNESS", "CHANGE BG", "PORTAL SSID", "PW GEN", "LED TOGGLE", "REMOTE ON", "ENCRYPT TEST", "BACK" };
-int settingsCount = 8;
+const char* settingsMenu[] = { "BRIGHTNESS", "CHANGE BG", "PORTAL SSID", "PW GEN", "LED TOGGLE", "REMOTE ON", "ENCRYPT TEST", "Device Info", "BACK" };
+int settingsCount = 9;
 
 // Меню SNIFFER
 const char* sniffMenu[] = { "PCAP SNIFF", "HANDSHAKE", "PROBE REQ", "BEACON SNIFF", "WIFI FUZZER", "TARGET FUZZ", "BACK" };
@@ -176,7 +176,7 @@ void drawMenu() {
   } else if (currentMenu == 3) {  // Явно указываем меню настроек
     display.print("SETTINGS");
     items = settingsMenu;
-    count = 8;
+    count = settingsCount;
   }
 
   // 4. ЛОГИКА СКРОЛЛА
@@ -796,7 +796,7 @@ void loop() {
   if (currentMenu == 0) count = 8;
   else if (currentMenu == 1) count = 5;
   else if (currentMenu == 2) count = 10;
-  else if (currentMenu == 3) count = 8;
+  else if (currentMenu == 3) count = 9;
   else if (currentMenu == 4) count = 7;
   else if (currentMenu == 5) count = 4;
 
@@ -936,7 +936,9 @@ void loop() {
           display.println(encryptedString("V-OS TEST"));
           display.display();
           while (digitalRead(PIN_BACK) == HIGH)
-            ;
+          ;
+        } else if (selectedItem == 7) { // <-- НОВЫЙ БЛОК
+          showDeviceInfo();
         } else {
           currentMenu = 0;
           selectedItem = 6;
@@ -982,6 +984,43 @@ void loop() {
   server.handleClient();
 }
 
+ void showDeviceInfo() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+
+  // Цикл работает, пока НЕ нажата кнопка BACK
+  while (digitalRead(PIN_BACK) == HIGH) {
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.println(F("--- V-OS INFO ---"));
+    
+    // Модель и ревизия чипа
+    display.print(F("Chip: ESP32-S3 v")); 
+    display.println(ESP.getChipRevision());
+
+    // Оперативная память (Heap)
+    display.print(F("Free RAM: "));
+    display.print(ESP.getFreeHeap() / 1024);
+    display.println(F(" KB"));
+
+    // Размер Flash-памяти
+    display.print(F("Flash: "));
+    display.print(ESP.getFlashChipSize() / (1024 * 1024));
+    display.println(F(" MB"));
+
+    // Время работы с момента включения (Аптайм)
+    display.print(F("Uptime: "));
+    display.print(millis() / 60000);
+    display.println(F(" min"));
+
+    display.setCursor(0, 50);
+    display.println(F("Push BACK to exit"));
+    display.display();
+    
+    delay(200); // Небольшая пауза, чтобы не мерцал экран
+  }
+}
 
 void runHardReset() {
 
