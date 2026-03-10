@@ -19,8 +19,8 @@
 | Button UP | GPIO 10      |
 | Button DWN| GPIO 11      |
 | Button SET| GPIO 21      |
+| Button RES| GPIO 18      |
 | Button BACK| GPIO 18     |
-| RGB LED   | GPIO 48      |
 
 ## 🛠 Установка
 1. Установите **Arduino IDE**.
@@ -36,3 +36,4 @@
 ## Исполбзовались пины
 10, 11, 12, 13, 14, 18, 21, GND для кнопок
 8, 9, GND, 3v3 для I2C
+
